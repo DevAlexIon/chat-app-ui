@@ -3,14 +3,8 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { registerSchema } from "../../utils/validationSchemas";
 import toast from "react-hot-toast";
 import { registerUser } from "../../services/register";
-import { redirect, useNavigate } from "react-router-dom";
-
-interface RegisterFormValues {
-  username: string;
-  email: string;
-  password: string;
-  terms: boolean;
-}
+import { useNavigate } from "react-router-dom";
+import { RegisterFormValues } from "../../../entities/authentites";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +13,6 @@ const RegisterPage: React.FC = () => {
     username: "",
     email: "",
     password: "",
-    terms: false,
   };
 
   const handleSubmit = async (
@@ -128,37 +121,6 @@ const RegisterPage: React.FC = () => {
                         className="text-red-500 text-sm"
                       />
                     </div>
-
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <Field
-                          id="terms"
-                          name="terms"
-                          type="checkbox"
-                          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                          required
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label
-                          htmlFor="terms"
-                          className="font-light text-gray-500 dark:text-gray-300"
-                        >
-                          I accept the{" "}
-                          <a
-                            className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                            href="#"
-                          >
-                            Terms and Conditions
-                          </a>
-                        </label>
-                        <ErrorMessage
-                          name="terms"
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
-                    </div>
                     <button
                       type="submit"
                       disabled={isSubmitting}
@@ -171,10 +133,10 @@ const RegisterPage: React.FC = () => {
                     <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                       Already have an account?{" "}
                       <a
-                        href="#"
+                        href="/login"
                         className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                       >
-                        Login here
+                        Sign In
                       </a>
                     </p>
                   </Form>
