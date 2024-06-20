@@ -1,13 +1,15 @@
 import React from "react";
 import AppRouter from "./Router";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <Provider store={store}>
       <Toaster />
       <AppRouter />
-    </div>
+    </Provider>
   );
 };
 

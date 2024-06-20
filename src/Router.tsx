@@ -1,14 +1,26 @@
+// AppRouter.tsx
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
+import HomePage from "./pages/auth/HomePage";
+import PrivateWrapper from "./utils/ProtectedRoute";
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
 
-const AppRouter = () => {
+const AppRouter: React.FC = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
+
   return (
     <Router>
       <Routes>
-        <Route path="/" Component={RegisterPage} />
-        <Route path="/login" Component={LoginPage} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route element={<PrivateWrapper auth={{ isAuthenticated }} />}>
+          <Route path="/dashboard" element={<HomePage />} />
+        </Route>
       </Routes>
     </Router>
   );

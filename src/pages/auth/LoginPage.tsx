@@ -3,10 +3,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "../../utils/validationSchemas";
 import { LoginFormValues } from "../../../entities/authentites";
-import { loginUser } from "../../services/login";
 import toast from "react-hot-toast";
+import { useAppDispatch } from "../../store";
+import { loginAsync } from "../../store/slices/authSlice";
 
 const LoginPage: React.FC = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const initialValues = {
@@ -14,19 +16,12 @@ const LoginPage: React.FC = () => {
     password: "",
   };
 
-  const handleSubmit = async (
-    values: LoginFormValues,
-    { setSubmitting }: FormikHelpers<LoginFormValues>
-  ) => {
-    try {
-      const data = await loginUser(values);
-      console.log("Login successful:", data);
+  const handleSubmit = async (values: LoginFormValues) => {
+    const { success, user } = await dispatch(loginAsync(values));
+    if (success) {
       toast.success("Login successful!");
-      navigate("/login");
-    } catch (error) {
-      toast.error(`Login failed: ${error.message}`);
-    } finally {
-      setSubmitting(false);
+      console.log("User data:", user);
+      navigate("/dashboard"); // Navigate to dashboard upon successful login
     }
   };
 
@@ -106,7 +101,7 @@ const LoginPage: React.FC = () => {
                     <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                       Don't have an account?{" "}
                       <a
-                        href="/"
+                        href="/register"
                         className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                       >
                         Sign Up
