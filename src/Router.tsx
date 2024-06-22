@@ -7,11 +7,10 @@ import HomePage from "./pages/auth/HomePage";
 import PrivateWrapper from "./utils/ProtectedRoute";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
+import { selectIsAuthenticated } from "./store/slices/authSlice";
 
 const AppRouter: React.FC = () => {
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isLoggedIn
-  );
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   return (
     <Router>

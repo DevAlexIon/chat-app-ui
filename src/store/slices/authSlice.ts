@@ -19,6 +19,7 @@ const initialState: AuthState = {
   isLoggedIn: false,
   user: null,
 };
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -27,7 +28,7 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
     },
-    setLoginDetails: (state, { payload }: PayloadAction<User>) => {
+    setUserDetails: (state, { payload }: PayloadAction<User>) => {
       state.user = payload;
       state.isLoggedIn = true;
     },
@@ -48,20 +49,21 @@ export const register =
         body: JSON.stringify(userData),
       });
 
-      if (response.status === 400) {
-        throw new Error("User already exists. Please login.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        return Promise.reject(data.msg);
       }
 
-      const data = await response.json();
+      dispatch(setUserDetails(data.userProfile));
       localStorage.setItem("token", data.token);
-      return { success: true, user: data.token };
+      return Promise.resolve("Registration successful!");
     } catch (error) {
-      toast.error(`${error.message}`);
-      return { success: false, error: error.message };
+      return Promise.reject("Registration failed. Please try again.");
     }
   };
 
-export const loginAsync =
+export const login =
   (userData: { email: string; password: string }) =>
   async (dispatch: AppDispatch) => {
     try {
@@ -73,18 +75,21 @@ export const loginAsync =
         body: JSON.stringify(userData),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Invalid credentials");
+        return Promise.reject(data.msg);
       }
 
-      const data = await response.json();
-      dispatch(setLoginDetails(data.userProfile));
+      dispatch(setUserDetails(data.userProfile));
       localStorage.setItem("token", data.token);
+      return Promise.resolve("Login successful!");
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+      return Promise.reject("Login failed. Please check your credentials.");
     }
   };
 
 export const selectUserDetails = (state: RootState) => state.auth.user;
+export const selectIsAuthenticated = (state: RootState) =>
+  state.auth.isLoggedIn;
 
-export const { setLoginDetails } = authSlice.actions;
+export const { setUserDetails } = authSlice.actions;

@@ -5,13 +5,12 @@ import { loginSchema } from "../../utils/validationSchemas";
 import { LoginFormValues } from "../../../entities/authentites";
 import toast from "react-hot-toast";
 import { useAppDispatch } from "../../store";
-import { loginAsync, selectUserDetails } from "../../store/slices/authSlice";
+import { login, selectUserDetails } from "../../store/slices/authSlice";
 import { useSelector } from "react-redux";
 
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const userDetails = useSelector(selectUserDetails);
 
   const initialValues = {
     email: "",
@@ -19,9 +18,14 @@ const LoginPage: React.FC = () => {
   };
 
   const handleSubmit = async (values: LoginFormValues) => {
-    await dispatch(loginAsync(values));
-    toast.success("Login successful!");
-    navigate("/dashboard");
+    dispatch(login(values))
+      .then((message) => {
+        toast.success(message);
+        navigate("/dashboard");
+      })
+      .catch((errorMessage) => {
+        toast.error(errorMessage);
+      });
   };
 
   return (

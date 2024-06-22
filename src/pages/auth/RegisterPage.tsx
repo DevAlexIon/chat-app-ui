@@ -18,11 +18,14 @@ const RegisterPage: React.FC = () => {
   };
 
   const handleSubmit = async (values: RegisterFormValues) => {
-    const { success, user } = await dispatch(register(values));
-    if (success) {
-      toast.success("Register successful!");
-      navigate("/dashboard");
-    }
+    dispatch(register(values))
+      .then((message) => {
+        toast.success(message);
+        navigate("/dashboard");
+      })
+      .catch((errorMessage) => {
+        toast.error(errorMessage);
+      });
   };
 
   return (
