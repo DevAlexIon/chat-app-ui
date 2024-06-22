@@ -1,13 +1,15 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { registerSchema } from "../../utils/validationSchemas";
 import toast from "react-hot-toast";
-import { registerUser } from "../../services/register";
 import { useNavigate } from "react-router-dom";
 import { RegisterFormValues } from "../../../entities/authentites";
+import { register } from "../../store/slices/authSlice";
+import { useAppDispatch } from "../../store";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const initialValues = {
     username: "",
@@ -15,19 +17,11 @@ const RegisterPage: React.FC = () => {
     password: "",
   };
 
-  const handleSubmit = async (
-    values: RegisterFormValues,
-    { setSubmitting }: FormikHelpers<RegisterFormValues>
-  ) => {
-    try {
-      const data = await registerUser(values);
-      console.log("Registration successful:", data);
-      toast.success("Registration successful!");
-      navigate("/login");
-    } catch (error) {
-      toast.error(`Registration failed: ${error.message}`);
-    } finally {
-      setSubmitting(false);
+  const handleSubmit = async (values: RegisterFormValues) => {
+    const { success, user } = await dispatch(register(values));
+    if (success) {
+      toast.success("Register successful!");
+      navigate("/dashboard");
     }
   };
 

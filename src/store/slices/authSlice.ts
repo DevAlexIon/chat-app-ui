@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppDispatch } from "..";
+import { AppDispatch, RootState } from "..";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 interface User {
-  id: string;
-  username: string;
+  avatar: string;
   email: string;
+  id: string;
+  lastLogin: string;
+  username: string;
 }
 
 interface AuthState {
@@ -22,20 +23,43 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action: PayloadAction<User>) {
-      state.isLoggedIn = true;
-      state.user = action.payload;
-    },
     logout(state) {
       state.isLoggedIn = false;
       state.user = null;
     },
+    setLoginDetails: (state, { payload }: PayloadAction<User>) => {
+      state.user = payload;
+      state.isLoggedIn = true;
+    },
   },
 });
 
-export const { login, logout } = authSlice.actions;
-
 export default authSlice.reducer;
+
+export const register =
+  (userData: { username: string; email: string; password: string }) =>
+  async (dispatch: AppDispatch) => {
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.status === 400) {
+        throw new Error("User already exists. Please login.");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      return { success: true, user: data.token };
+    } catch (error) {
+      toast.error(`${error.message}`);
+      return { success: false, error: error.message };
+    }
+  };
 
 export const loginAsync =
   (userData: { email: string; password: string }) =>
@@ -50,15 +74,17 @@ export const loginAsync =
       });
 
       if (!response.ok) {
-        throw new Error("Invalid credentials"); // Throw error for invalid credentials
+        throw new Error("Invalid credentials");
       }
 
       const data = await response.json();
-      dispatch(login(data.user));
+      dispatch(setLoginDetails(data.userProfile));
       localStorage.setItem("token", data.token);
-      return { success: true, user: data.user }; // Return user data upon successful login
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
-      return { success: false, error: error.message }; // Return error information upon login failure
     }
   };
+
+export const selectUserDetails = (state: RootState) => state.auth.user;
+
+export const { setLoginDetails } = authSlice.actions;
