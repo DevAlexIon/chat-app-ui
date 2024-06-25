@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "..";
 import toast from "react-hot-toast";
 
@@ -20,17 +20,33 @@ const initialState: AuthState = {
   user: null,
 };
 
+export const loadUserFromLocalStorage = createAsyncThunk(
+  "auth/loadUserFromLocalStorage",
+  async (_, { dispatch }) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    if (token && user) {
+      dispatch(setUserDetails(JSON.parse(user)));
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout(state) {
-      state.isLoggedIn = false;
-      state.user = null;
-    },
-    setUserDetails: (state, { payload }: PayloadAction<User>) => {
-      state.user = payload;
+    setUserDetails(state, action) {
+      state.user = action.payload;
       state.isLoggedIn = true;
+    },
+    logout(state) {
+      state.user = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
   },
 });
@@ -82,6 +98,7 @@ export const login =
 
       dispatch(setUserDetails(data.userProfile));
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.userProfile));
       return Promise.resolve("Login successful!");
     } catch (error) {
       return Promise.reject("Login failed. Please check your credentials.");
