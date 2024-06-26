@@ -3,7 +3,15 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      width: {
+        22: "88px",
+      },
+      boxShadow: {
+        custom: "0 0 24px 0 rgba(0, 0, 0, 0.08)",
+      },
       colors: {
+        "custom-purple": "#615EF0",
+        "purple-400": "#9f7aea",
         primary: {
           50: "#eff6ff",
           100: "#dbeafe",
