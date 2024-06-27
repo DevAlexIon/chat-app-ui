@@ -6,6 +6,9 @@ export default {
       width: {
         22: "88px",
       },
+      margin: {
+        96: "496px",
+      },
       boxShadow: {
         custom: "0 0 24px 0 rgba(0, 0, 0, 0.08)",
       },
