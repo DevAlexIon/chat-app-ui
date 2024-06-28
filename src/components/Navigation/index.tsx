@@ -13,7 +13,7 @@ import { LiaCogSolid } from "react-icons/lia";
 
 const Navigation: React.FC = () => {
   return (
-    <div className="flex flex-col w-22 h-screen bg-white pt-5 shadow-custom">
+    <div className="flex flex-col w-22 h-screen bg-white pt-5 shadow-custom z-10">
       <div>
         <div className="flex justify-center items-center h-12 mb-2">
           <NavLink

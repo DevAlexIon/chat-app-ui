@@ -5,6 +5,7 @@ export default {
     extend: {
       width: {
         22: "88px",
+        369: "369px",
       },
       margin: {
         96: "496px",
