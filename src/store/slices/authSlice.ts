@@ -109,4 +109,4 @@ export const selectUserDetails = (state: RootState) => state.auth.user;
 export const selectIsAuthenticated = (state: RootState) =>
   state.auth.isLoggedIn;
 
-export const { setUserDetails } = authSlice.actions;
+export const { setUserDetails, logout } = authSlice.actions;
