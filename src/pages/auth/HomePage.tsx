@@ -6,7 +6,6 @@ import MessagesSidebar from "../../components/Messages";
 import ChatWindow from "../../components/Chat";
 
 const HomePage: React.FC = () => {
-  const test = useSelector(selectUserDetails);
   return (
     <div className="flex">
       <Navigation />
