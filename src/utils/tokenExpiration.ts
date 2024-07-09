@@ -5,9 +5,8 @@ import { logout } from "../store/slices/authSlice";
 const isTokenExpired = (token: string): boolean => {
   try {
     const decodedToken = jwtDecode(token);
-    console.log(decodedToken);
     const currentTime = Date.now() / 1000;
-    return decodedToken.exp < currentTime;
+    return (decodedToken as { exp: number }).exp < currentTime;
   } catch (error) {
     return true;
   }
