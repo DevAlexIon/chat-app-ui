@@ -8,6 +8,7 @@ import PrivateWrapper from "./utils/ProtectedRoute";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "./store/slices/authSlice";
 import useCheckTokenExpiration from "./utils/tokenExpiration";
+import FriendsPage from "./pages/auth/FriendsPage";
 
 const AppRouter: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -31,6 +32,7 @@ const AppRouter: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<PrivateWrapper auth={{ isAuthenticated }} />}>
           <Route path="/dashboard" element={<HomePage />} />
+          <Route path="/friends" element={<FriendsPage />} />
         </Route>
       </Routes>
     </Router>

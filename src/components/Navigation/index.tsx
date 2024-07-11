@@ -11,8 +11,11 @@ import {
 import { IoCalendarOutline, IoCalendarSharp } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { selectUserDetails } from "../../store/slices/authSlice";
+import { fetchUserFriends } from "../../store/slices/userSlice";
+import { useAppDispatch } from "../../store";
 
 const Navigation: React.FC = () => {
+  const dispatch = useAppDispatch();
   const userDetails = useSelector(selectUserDetails);
 
   return (
@@ -52,7 +55,10 @@ const Navigation: React.FC = () => {
         </div>
         <div className="flex justify-center items-center h-12 mb-2">
           <NavLink
-            to="/"
+            to="/friends"
+            onClick={() => {
+              dispatch(fetchUserFriends());
+            }}
             className={({ isActive }) =>
               `flex items-center justify-center w-full h-full ${
                 isActive ? "text-custom-purple rounded-lg p-2" : "text-black"

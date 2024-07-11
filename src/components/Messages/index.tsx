@@ -1,4 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import {
+  selectIsAuthenticated,
+  selectUserDetails,
+} from "../../store/slices/authSlice";
+import { useAppDispatch } from "../../store";
+import { fetchUserMessages } from "../../store/slices/userSlice";
 
 const messages = [
   {
@@ -28,10 +35,16 @@ const messages = [
 ];
 
 const MessagesSidebar: React.FC = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserMessages());
+  }, [dispatch]);
+
   return (
     <div className="flex flex-col w-369 h-screen bg-white p-4 ml-6">
       <div className="flex justify-between items-center my-3">
-        <h2 className="text-xl font-semibold">Messages</h2>
+        <h2 className="text-xl fon2t-semibold">Messages</h2>
         <span className="bg-purple-500 text-white text-sm py-1 px-3 rounded-full">
           12
         </span>

@@ -1,6 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "..";
-import toast from "react-hot-toast";
 
 interface User {
   avatar: string;
@@ -51,8 +50,6 @@ const authSlice = createSlice({
   },
 });
 
-export default authSlice.reducer;
-
 export const register =
   (userData: { username: string; email: string; password: string }) =>
   async (dispatch: AppDispatch) => {
@@ -97,6 +94,7 @@ export const login =
       }
 
       dispatch(setUserDetails(data.userProfile));
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.userProfile));
       return Promise.resolve("Login successful!");
@@ -110,3 +108,4 @@ export const selectIsAuthenticated = (state: RootState) =>
   state.auth.isLoggedIn;
 
 export const { setUserDetails, logout } = authSlice.actions;
+export default authSlice.reducer;
