@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { FaCog, FaUserFriends as FaUserFriendsFilled } from "react-icons/fa";
+import { FaUserFriends as FaUserFriendsFilled } from "react-icons/fa";
 import {
   AiOutlineMessage,
   AiOutlineHome,
@@ -9,9 +9,12 @@ import {
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import { IoCalendarOutline, IoCalendarSharp } from "react-icons/io5";
-import { LiaCogSolid } from "react-icons/lia";
+import { useSelector } from "react-redux";
+import { selectUserDetails } from "../../store/slices/authSlice";
 
 const Navigation: React.FC = () => {
+  const userDetails = useSelector(selectUserDetails);
+
   return (
     <div className="flex flex-col w-22 h-screen bg-white pt-5 shadow-custom z-10">
       <div>
@@ -105,16 +108,20 @@ const Navigation: React.FC = () => {
       <div>
         <div className="flex justify-center items-center h-12 mb-2">
           <NavLink
-            to="/settings"
+            to="/dashboard"
             className={({ isActive }) =>
               `flex items-center justify-center w-full h-full ${
-                isActive ? "text-custom-purple rounded-lg p-2" : "text-black"
+                isActive ? "bg-transparent " : "bg-transparent"
               }`
             }
           >
-            {({ isActive }) =>
-              isActive ? <FaCog size={24} /> : <LiaCogSolid size={24} />
-            }
+            {({ isActive }) => (
+              <img
+                src={userDetails?.avatar}
+                alt="User Avatar"
+                className="w-6"
+              />
+            )}
           </NavLink>
         </div>
       </div>
