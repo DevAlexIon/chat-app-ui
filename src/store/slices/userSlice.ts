@@ -53,6 +53,24 @@ export const fetchUserFriends = createAsyncThunk(
   }
 );
 
+export const sendFriendRequest = createAsyncThunk(
+  "user/sendFriendRequest",
+  async (recipientId: string) => {
+    const token = localStorage.getItem("token") || "";
+
+    const response = await fetch("http://localhost:5001/friends", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": token,
+      },
+      body: JSON.stringify({ recipientId }),
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
