@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "..";
+import toast from "react-hot-toast";
 
 interface User {
   avatar: string;
@@ -55,19 +56,29 @@ export const fetchUserFriends = createAsyncThunk(
 
 export const sendFriendRequest = createAsyncThunk(
   "user/sendFriendRequest",
-  async (recipientId: string) => {
-    const token = localStorage.getItem("token") || "";
+  async (recipientId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch("http://localhost:5001/friends", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        },
+        body: JSON.stringify({ recipientId }),
+      });
+      const data = await response.json();
 
-    const response = await fetch("http://localhost:5001/friends", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": token,
-      },
-      body: JSON.stringify({ recipientId }),
-    });
-    const data = await response.json();
-    console.log(data);
+      if (!response.ok) {
+        toast.error(data.msg || "An error occurred");
+        return rejectWithValue(data.msg);
+      }
+
+      toast.success(data.msg || "Friend request sent successfully");
+    } catch (error) {
+      toast.error("Network error");
+      return rejectWithValue("Network error");
+    }
   }
 );
 
