@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
 import {
-  fetchUserFriends,
   selectUserFriends,
   sendFriendRequest,
 } from "../../store/slices/userSlice";
@@ -20,10 +19,6 @@ const Friends: React.FC = () => {
   const [searchFriend, setSearchFriend] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const token = localStorage.getItem("token") || "";
-
-  useEffect(() => {
-    dispatch(fetchUserFriends());
-  }, [dispatch]);
 
   const fetchSearchResults = useCallback(
     debounce((query: string) => {
