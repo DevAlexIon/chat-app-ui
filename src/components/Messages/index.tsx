@@ -1,9 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import {
-  selectIsAuthenticated,
-  selectUserDetails,
-} from "../../store/slices/authSlice";
 import { useAppDispatch } from "../../store";
 import { fetchUserMessages } from "../../store/slices/userSlice";
 

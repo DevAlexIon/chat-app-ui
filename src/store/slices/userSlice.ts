@@ -82,6 +82,30 @@ export const sendFriendRequest = createAsyncThunk(
   }
 );
 
+export const getFriendRequests = createAsyncThunk(
+  "user/getFriendRequests",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch("http://localhost:5001/friends", {
+        headers: {
+          "x-auth-token": token,
+        },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.msg);
+      }
+
+      console.log(data);
+      return data;
+    } catch (error) {
+      return rejectWithValue("Network error");
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,

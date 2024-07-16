@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
 import {
+  getFriendRequests,
   selectUserFriends,
   sendFriendRequest,
 } from "../../store/slices/userSlice";
@@ -47,6 +48,7 @@ const Friends: React.FC = () => {
 
   useEffect(() => {
     fetchSearchResults(searchFriend);
+    dispatch(getFriendRequests());
 
     return () => {
       fetchSearchResults.cancel();
