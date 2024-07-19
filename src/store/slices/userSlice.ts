@@ -13,11 +13,13 @@ interface User {
 interface AuthState {
   user: User | null;
   friends: any[];
+  friendRequests: any[];
 }
 
 const initialState: AuthState = {
   user: null,
   friends: [],
+  friendRequests: [],
 };
 
 export const fetchUserMessages = createAsyncThunk(
@@ -84,7 +86,7 @@ export const sendFriendRequest = createAsyncThunk(
 
 export const getFriendRequests = createAsyncThunk(
   "user/getFriendRequests",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const token = localStorage.getItem("token") || "";
       const response = await fetch("http://localhost:5001/friends", {
@@ -97,8 +99,7 @@ export const getFriendRequests = createAsyncThunk(
       if (!response.ok) {
         return rejectWithValue(data.msg);
       }
-
-      console.log(data);
+      dispatch(setFriendRequests(data));
       return data;
     } catch (error) {
       return rejectWithValue("Network error");
@@ -110,21 +111,24 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // Define additional reducers for updating the user data
     setFriendsList(state, action) {
       state.friends = action.payload;
+    },
+    setFriendRequests(state, action) {
+      state.friendRequests = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUserMessages.fulfilled, (state, action) => {
-      // Update the state with the fetched user data
       state = action.payload;
     });
   },
 });
 
 export const selectUserFriends = (state: RootState) => state.user.friends;
+export const selectFriendRequests = (state: RootState) =>
+  state.user.friendRequests;
 
 // Export the actions and reducer
-export const { setFriendsList } = userSlice.actions;
+export const { setFriendsList, setFriendRequests } = userSlice.actions;
 export default userSlice.reducer;

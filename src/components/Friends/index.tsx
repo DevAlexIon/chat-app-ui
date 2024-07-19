@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
 import {
   getFriendRequests,
+  selectFriendRequests,
   selectUserFriends,
   sendFriendRequest,
 } from "../../store/slices/userSlice";
@@ -56,6 +57,7 @@ const Friends: React.FC = () => {
   }, [searchFriend, fetchSearchResults]);
 
   const friends = useSelector(selectUserFriends);
+  const friendRequest = useSelector(selectFriendRequests);
 
   return (
     <div className="flex flex-col w-369 h-screen bg-white p-4 ml-6">
