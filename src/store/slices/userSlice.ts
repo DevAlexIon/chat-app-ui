@@ -13,13 +13,19 @@ interface User {
 interface AuthState {
   user: User | null;
   friends: any[];
-  friendRequests: any[];
+  friendRequests: {
+    receivedRequests: any[];
+    sentRequests: any[];
+  };
 }
 
 const initialState: AuthState = {
   user: null,
   friends: [],
-  friendRequests: [],
+  friendRequests: {
+    receivedRequests: [],
+    sentRequests: [],
+  },
 };
 
 export const fetchUserMessages = createAsyncThunk(

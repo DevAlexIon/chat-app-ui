@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
 import {
+  fetchUserFriends,
   getFriendRequests,
   selectFriendRequests,
   selectUserFriends,
@@ -16,41 +17,63 @@ interface Friend {
   username: string;
 }
 
+interface FriendRequest {
+  createdAt: string;
+  recipientId: {
+    avatar: string;
+    email: string;
+    username: string;
+    _id: string;
+  };
+  status: string;
+  updatedAt: string;
+  _id: string;
+}
+
+type FriendRequests = {
+  receivedRequests: FriendRequest[];
+  sentRequests: FriendRequest[];
+};
+
 const Friends: React.FC = () => {
   const dispatch = useAppDispatch();
   const [searchFriend, setSearchFriend] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Friend[]>([]);
   const token = localStorage.getItem("token") || "";
 
   const fetchSearchResults = useCallback(
-    debounce((query: string) => {
+    debounce(async (query: string) => {
       if (query.trim()) {
-        fetch(
-          `http://localhost:5001/friends/search?query=${encodeURIComponent(
-            query
-          )}`,
-          {
-            headers: {
-              "x-auth-token": token,
-            },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => setSearchResults(data))
-          .catch((error) =>
-            console.error("Error fetching search results:", error)
+        try {
+          const response = await fetch(
+            `http://localhost:5001/friends/search?query=${encodeURIComponent(
+              query
+            )}`,
+            {
+              headers: {
+                "x-auth-token": token,
+              },
+            }
           );
+          const data = await response.json();
+          setSearchResults(data);
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+        }
       } else {
         setSearchResults([]);
       }
     }, 300),
-    []
+    [token]
   );
 
   useEffect(() => {
-    fetchSearchResults(searchFriend);
     dispatch(getFriendRequests());
+    dispatch(fetchUserFriends());
+  }, [dispatch]);
 
+  useEffect(() => {
+    fetchSearchResults(searchFriend);
     return () => {
       fetchSearchResults.cancel();
     };
@@ -106,18 +129,36 @@ const Friends: React.FC = () => {
             </div>
           )
         ) : (
-          friends.map((friend) => (
+          // friends.map((friend: Friend) => (
+          //   <div
+          //     key={friend._id}
+          //     className="flex items-center mb-4 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
+          //   >
+          //     <img
+          //       src={friend.avatar}
+          //       className="w-12 h-12 rounded-full bg-gray-300 mr-4"
+          //     />
+          //     <div className="flex-1">
+          //       <div className="flex justify-between items-center mb-1">
+          //         <span className="font-semibold">{friend.username}</span>
+          //       </div>
+          //     </div>
+          //   </div>
+          // ))
+          friendRequest.sentRequests.map((request: FriendRequest) => (
             <div
-              key={friend._id}
+              key={request._id}
               className="flex items-center mb-4 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
             >
               <img
-                src={friend.avatar}
+                src={request.recipientId.avatar}
                 className="w-12 h-12 rounded-full bg-gray-300 mr-4"
               />
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-semibold">{friend.username}</span>
+                  <span className="font-semibold">
+                    {request.recipientId.username}
+                  </span>
                 </div>
               </div>
             </div>
