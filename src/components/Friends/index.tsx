@@ -1,3 +1,4 @@
+// components/Friends.tsx
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
@@ -7,9 +8,11 @@ import {
   selectFriendRequests,
   selectUserFriends,
   sendFriendRequest,
+  searchFriends,
+  selectSearchResults,
 } from "../../store/slices/userSlice";
-import debounce from "lodash/debounce";
 import { BsPersonAdd } from "react-icons/bs";
+import { createDebouncedSearch } from "../../utils/debouncedSearch";
 
 interface Friend {
   _id: string;
@@ -30,42 +33,13 @@ interface FriendRequest {
   _id: string;
 }
 
-type FriendRequests = {
-  receivedRequests: FriendRequest[];
-  sentRequests: FriendRequest[];
-};
-
 const Friends: React.FC = () => {
   const dispatch = useAppDispatch();
   const [searchFriend, setSearchFriend] = useState("");
-  const [searchResults, setSearchResults] = useState<Friend[]>([]);
-  const token = localStorage.getItem("token") || "";
-
-  const fetchSearchResults = useCallback(
-    debounce(async (query: string) => {
-      if (query.trim()) {
-        try {
-          const response = await fetch(
-            `http://localhost:5001/friends/search?query=${encodeURIComponent(
-              query
-            )}`,
-            {
-              headers: {
-                "x-auth-token": token,
-              },
-            }
-          );
-          const data = await response.json();
-          setSearchResults(data);
-        } catch (error) {
-          console.error("Error fetching search results:", error);
-        }
-      } else {
-        setSearchResults([]);
-      }
-    }, 300),
-    [token]
-  );
+  const searchResults = useSelector(selectSearchResults);
+  const debouncedSearch = useCallback(createDebouncedSearch(dispatch), [
+    dispatch,
+  ]);
 
   useEffect(() => {
     dispatch(getFriendRequests());
@@ -73,11 +47,10 @@ const Friends: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchSearchResults(searchFriend);
-    return () => {
-      fetchSearchResults.cancel();
-    };
-  }, [searchFriend, fetchSearchResults]);
+    if (searchFriend.trim()) {
+      debouncedSearch(searchFriend);
+    }
+  }, [searchFriend, debouncedSearch]);
 
   const friends = useSelector(selectUserFriends);
   const friendRequest = useSelector(selectFriendRequests);
@@ -129,22 +102,6 @@ const Friends: React.FC = () => {
             </div>
           )
         ) : (
-          // friends.map((friend: Friend) => (
-          //   <div
-          //     key={friend._id}
-          //     className="flex items-center mb-4 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
-          //   >
-          //     <img
-          //       src={friend.avatar}
-          //       className="w-12 h-12 rounded-full bg-gray-300 mr-4"
-          //     />
-          //     <div className="flex-1">
-          //       <div className="flex justify-between items-center mb-1">
-          //         <span className="font-semibold">{friend.username}</span>
-          //       </div>
-          //     </div>
-          //   </div>
-          // ))
           friendRequest.sentRequests.map((request: FriendRequest) => (
             <div
               key={request._id}

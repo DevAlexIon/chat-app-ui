@@ -10,13 +10,33 @@ interface User {
   username: string;
 }
 
+interface Friend {
+  _id: string;
+  avatar: string;
+  username: string;
+}
+
+interface FriendRequest {
+  createdAt: string;
+  recipientId: {
+    avatar: string;
+    email: string;
+    username: string;
+    _id: string;
+  };
+  status: string;
+  updatedAt: string;
+  _id: string;
+}
+
 interface AuthState {
   user: User | null;
-  friends: any[];
+  friends: Friend[];
   friendRequests: {
-    receivedRequests: any[];
-    sentRequests: any[];
+    receivedRequests: FriendRequest[];
+    sentRequests: FriendRequest[];
   };
+  searchResults: Friend[];
 }
 
 const initialState: AuthState = {
@@ -26,6 +46,7 @@ const initialState: AuthState = {
     receivedRequests: [],
     sentRequests: [],
   },
+  searchResults: [],
 };
 
 export const fetchUserMessages = createAsyncThunk(
@@ -47,7 +68,7 @@ export const fetchUserMessages = createAsyncThunk(
 );
 
 export const fetchUserFriends = createAsyncThunk(
-  "user/fetchUserMessages",
+  "user/fetchUserFriends",
   async (_, { dispatch }) => {
     const token = localStorage.getItem("token") || "";
 
@@ -83,6 +104,7 @@ export const sendFriendRequest = createAsyncThunk(
       }
 
       toast.success(data.msg || "Friend request sent successfully");
+      return data;
     } catch (error) {
       toast.error("Network error");
       return rejectWithValue("Network error");
@@ -113,6 +135,33 @@ export const getFriendRequests = createAsyncThunk(
   }
 );
 
+export const searchFriends = createAsyncThunk(
+  "user/searchFriends",
+  async (query: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch(
+        `http://localhost:5001/friends/search?query=${encodeURIComponent(
+          query
+        )}`,
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.msg);
+      }
+      return data;
+    } catch (error) {
+      return rejectWithValue("Network error");
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -123,18 +172,27 @@ const userSlice = createSlice({
     setFriendRequests(state, action) {
       state.friendRequests = action.payload;
     },
+    setSearchResults(state, action) {
+      state.searchResults = action.payload;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchUserMessages.fulfilled, (state, action) => {
-      state = action.payload;
-    });
+    builder
+      .addCase(fetchUserMessages.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(searchFriends.fulfilled, (state, action) => {
+        state.searchResults = action.payload;
+      });
   },
 });
 
 export const selectUserFriends = (state: RootState) => state.user.friends;
 export const selectFriendRequests = (state: RootState) =>
   state.user.friendRequests;
+export const selectSearchResults = (state: RootState) =>
+  state.user.searchResults;
 
-// Export the actions and reducer
-export const { setFriendsList, setFriendRequests } = userSlice.actions;
+export const { setFriendsList, setFriendRequests, setSearchResults } =
+  userSlice.actions;
 export default userSlice.reducer;
