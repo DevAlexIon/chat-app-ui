@@ -8,8 +8,8 @@ import {
   selectFriendRequests,
   selectUserFriends,
   sendFriendRequest,
-  searchFriends,
   selectSearchResults,
+  acceptFriendRequest,
 } from "../../store/slices/userSlice";
 import { BsPersonAdd } from "react-icons/bs";
 import { createDebouncedSearch } from "../../utils/debouncedSearch";
@@ -22,7 +22,7 @@ interface Friend {
 
 interface FriendRequest {
   createdAt: string;
-  recipientId: {
+  requester: {
     avatar: string;
     email: string;
     username: string;
@@ -102,20 +102,25 @@ const Friends: React.FC = () => {
             </div>
           )
         ) : (
-          friendRequest.sentRequests.map((request: FriendRequest) => (
+          friendRequest.receivedRequests.map((request: FriendRequest) => (
             <div
               key={request._id}
               className="flex items-center mb-4 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
             >
               <img
-                src={request.recipientId.avatar}
+                src={request.requester.avatar}
                 className="w-12 h-12 rounded-full bg-gray-300 mr-4"
               />
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-semibold">
-                    {request.recipientId.username}
+                    {request.requester.username}
                   </span>
+                  <BsPersonAdd
+                    size={22}
+                    className="cursor-pointer"
+                    onClick={() => dispatch(acceptFriendRequest(request._id))}
+                  />
                 </div>
               </div>
             </div>

@@ -18,7 +18,7 @@ interface Friend {
 
 interface FriendRequest {
   createdAt: string;
-  recipientId: {
+  requester: {
     avatar: string;
     email: string;
     username: string;
@@ -104,6 +104,39 @@ export const sendFriendRequest = createAsyncThunk(
       }
 
       toast.success(data.msg || "Friend request sent successfully");
+      return data;
+    } catch (error) {
+      toast.error("Network error");
+      return rejectWithValue("Network error");
+    }
+  }
+);
+
+export const acceptFriendRequest = createAsyncThunk(
+  "user/acceptFriendRequest",
+  async (requestId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch(
+        `http://localhost:5001/friends/${requestId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          },
+          body: JSON.stringify({ action: "accepted" }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) {
+        toast.error(data.msg || "An error occurred");
+        return rejectWithValue(data.msg);
+      }
+
+      toast.success(data.msg || "Friend request accepted successfully");
       return data;
     } catch (error) {
       toast.error("Network error");
