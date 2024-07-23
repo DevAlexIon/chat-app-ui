@@ -145,6 +145,38 @@ export const acceptFriendRequest = createAsyncThunk(
   }
 );
 
+export const declineFriendRequest = createAsyncThunk(
+  "user/declineFriendRequest",
+  async (requestId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch(
+        `http://localhost:5001/friends/${requestId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          },
+          body: JSON.stringify({ action: "declined" }),
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.msg || "An error occurred");
+        return rejectWithValue(data.msg);
+      }
+
+      toast.success(data.msg || "Friend request declined successfully");
+      return data;
+    } catch (error) {
+      toast.error("Network error");
+      return rejectWithValue("Network error");
+    }
+  }
+);
+
 export const getFriendRequests = createAsyncThunk(
   "user/getFriendRequests",
   async (_, { rejectWithValue, dispatch }) => {

@@ -10,6 +10,7 @@ import {
   sendFriendRequest,
   selectSearchResults,
   acceptFriendRequest,
+  declineFriendRequest,
 } from "../../store/slices/userSlice";
 import { BsPersonAdd } from "react-icons/bs";
 import { createDebouncedSearch } from "../../utils/debouncedSearch";
@@ -120,6 +121,11 @@ const Friends: React.FC = () => {
                     size={22}
                     className="cursor-pointer"
                     onClick={() => dispatch(acceptFriendRequest(request._id))}
+                  />
+                  <BsPersonAdd
+                    size={22}
+                    className="cursor-pointer"
+                    onClick={() => dispatch(declineFriendRequest(request._id))}
                   />
                 </div>
               </div>
