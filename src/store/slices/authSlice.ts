@@ -54,13 +54,16 @@ export const register =
   (userData: { username: string; email: string; password: string }) =>
   async (dispatch: AppDispatch) => {
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      const response = await fetch(
+        "https://pure-gorge-66268-06ab3e8d137a.herokuapp.com/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        }
+      );
 
       const data = await response.json();
 
@@ -80,13 +83,16 @@ export const login =
   (userData: { email: string; password: string }) =>
   async (dispatch: AppDispatch) => {
     try {
-      const response = await fetch("http://localhost:5001/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      const response = await fetch(
+        "https://pure-gorge-66268-06ab3e8d137a.herokuapp.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) {
