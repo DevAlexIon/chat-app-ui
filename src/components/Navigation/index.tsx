@@ -1,16 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { FaUserFriends as FaUserFriendsFilled } from "react-icons/fa";
-import {
-  AiOutlineMessage,
-  AiOutlineHome,
-  AiFillMessage,
-  AiFillHome,
-  AiOutlineUsergroupAdd,
-} from "react-icons/ai";
-import { IoCalendarOutline, IoCalendarSharp } from "react-icons/io5";
+import { AiOutlineMessage, AiFillMessage } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { selectUserDetails } from "../../store/slices/authSlice";
+import { RiUserAddFill, RiUserAddLine } from "react-icons/ri";
 
 const Navigation: React.FC = () => {
   const userDetails = useSelector(selectUserDetails);
@@ -35,24 +28,10 @@ const Navigation: React.FC = () => {
           </NavLink>
         </div>
       </div>
-      <div className="mt-12 mb-96">
+      <div className="mt-40 mb-96">
         <div className="flex justify-center items-center h-12 mb-2">
           <NavLink
             to="/dashboard"
-            className={({ isActive }) =>
-              `flex items-center justify-center w-full h-full ${
-                isActive ? "text-custom-purple rounded-lg p-2" : "text-black"
-              }`
-            }
-          >
-            {({ isActive }) =>
-              isActive ? <AiFillHome size={24} /> : <AiOutlineHome size={24} />
-            }
-          </NavLink>
-        </div>
-        <div className="flex justify-center items-center h-12 mb-2">
-          <NavLink
-            to="/friends"
             className={({ isActive }) =>
               `flex items-center justify-center w-full h-full ${
                 isActive ? "text-custom-purple rounded-lg p-2" : "text-black"
@@ -70,7 +49,7 @@ const Navigation: React.FC = () => {
         </div>
         <div className="flex justify-center items-center h-12 mb-2">
           <NavLink
-            to="/user"
+            to="/friends"
             className={({ isActive }) =>
               `flex items-center justify-center w-full h-full ${
                 isActive ? "text-custom-purple rounded-lg p-2" : "text-black"
@@ -79,27 +58,9 @@ const Navigation: React.FC = () => {
           >
             {({ isActive }) =>
               isActive ? (
-                <FaUserFriendsFilled size={24} />
+                <RiUserAddFill size={24} />
               ) : (
-                <AiOutlineUsergroupAdd size={24} />
-              )
-            }
-          </NavLink>
-        </div>
-        <div className="flex justify-center items-center h-12 mb-2">
-          <NavLink
-            to="/calendar"
-            className={({ isActive }) =>
-              `flex items-center justify-center w-full h-full ${
-                isActive ? "text-custom-purple rounded-lg p-2" : "text-black"
-              }`
-            }
-          >
-            {({ isActive }) =>
-              isActive ? (
-                <IoCalendarSharp size={24} />
-              ) : (
-                <IoCalendarOutline size={24} />
+                <RiUserAddLine size={24} />
               )
             }
           </NavLink>

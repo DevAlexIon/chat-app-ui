@@ -14,25 +14,7 @@ import {
 } from "../../store/slices/userSlice";
 import { BsPersonAdd } from "react-icons/bs";
 import { createDebouncedSearch } from "../../utils/debouncedSearch";
-
-interface Friend {
-  _id: string;
-  avatar: string;
-  username: string;
-}
-
-interface FriendRequest {
-  createdAt: string;
-  requester: {
-    avatar: string;
-    email: string;
-    username: string;
-    _id: string;
-  };
-  status: string;
-  updatedAt: string;
-  _id: string;
-}
+import { Friend, FriendRequest } from "../../types/types";
 
 const Friends: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -61,7 +43,7 @@ const Friends: React.FC = () => {
       <div className="flex justify-between items-center my-3">
         <h2 className="text-xl font-semibold">Friends</h2>
         <span className="bg-purple-500 text-white text-sm py-1 px-3 rounded-full">
-          {friends.length}
+          {friends.length || 0}
         </span>
       </div>
       <div className="relative mb-4">
