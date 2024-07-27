@@ -25,5 +25,3 @@ We welcome contributions to improve the Chat App UI! Here's how you can help:
 1. **Report Issues:** Found a bug or have a feature request? Open an issue on our GitHub repository.
 2. **Submit Pull Requests:** Have a fix or enhancement? Fork the repository, make your changes, and submit a pull request.
 3. **Feedback:** Your feedback is valuable to us. Share your experience and suggestions for improvements.
-
-Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
