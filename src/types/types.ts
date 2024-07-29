@@ -6,7 +6,7 @@ export type Friend = {
 
 export type FriendRequest = {
   createdAt: string;
-  requester: {
+  recipientId?: {
     avatar: string;
     email: string;
     username: string;

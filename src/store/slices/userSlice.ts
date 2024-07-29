@@ -248,6 +248,12 @@ const userSlice = createSlice({
       })
       .addCase(searchFriends.fulfilled, (state, action) => {
         state.searchResults = action.payload;
+      })
+      .addCase(sendFriendRequest.fulfilled, (state, action) => {
+        state.friendRequests.sentRequests.push(action.payload);
+      })
+      .addCase(getFriendRequests.fulfilled, (state, action) => {
+        state.friendRequests = action.payload;
       });
   },
 });

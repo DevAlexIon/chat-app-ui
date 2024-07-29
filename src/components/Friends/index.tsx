@@ -1,4 +1,3 @@
-// components/Friends.tsx
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
@@ -12,7 +11,7 @@ import {
   acceptFriendRequest,
   declineFriendRequest,
 } from "../../store/slices/userSlice";
-import { BsPersonAdd } from "react-icons/bs";
+import { BsPersonAdd, BsPersonDash } from "react-icons/bs";
 import { createDebouncedSearch } from "../../utils/debouncedSearch";
 import { Friend, FriendRequest } from "../../types/types";
 
@@ -37,6 +36,12 @@ const Friends: React.FC = () => {
 
   const friends = useSelector(selectUserFriends);
   const friendRequest = useSelector(selectFriendRequests);
+
+  const handleSendFriendRequest = (friendId: string) => {
+    dispatch(sendFriendRequest(friendId)).then(() => {
+      dispatch(getFriendRequests());
+    });
+  };
 
   return (
     <div className="flex flex-col w-369 h-screen bg-white p-4 ml-6">
@@ -70,11 +75,18 @@ const Friends: React.FC = () => {
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-1 ">
                     <span className="font-semibold">{friend.username}</span>
-                    <BsPersonAdd
-                      size={22}
-                      className="cursor-pointer"
-                      onClick={() => dispatch(sendFriendRequest(friend._id))}
-                    />
+                    {friendRequest.sentRequests.some(
+                      (request: FriendRequest) =>
+                        request.recipientId?._id === friend._id
+                    ) ? (
+                      <BsPersonDash size={20} />
+                    ) : (
+                      <BsPersonAdd
+                        size={20}
+                        className={`cursor-pointer`}
+                        onClick={() => handleSendFriendRequest(friend._id)}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -85,30 +97,18 @@ const Friends: React.FC = () => {
             </div>
           )
         ) : (
-          friendRequest.receivedRequests.map((request: FriendRequest) => (
+          friends.map((friend: Friend) => (
             <div
-              key={request._id}
+              key={friend._id}
               className="flex items-center mb-4 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
             >
               <img
-                src={request.requester.avatar}
+                src={friend.avatar}
                 className="w-12 h-12 rounded-full bg-gray-300 mr-4"
               />
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-semibold">
-                    {request.requester.username}
-                  </span>
-                  <BsPersonAdd
-                    size={22}
-                    className="cursor-pointer"
-                    onClick={() => dispatch(acceptFriendRequest(request._id))}
-                  />
-                  <BsPersonAdd
-                    size={22}
-                    className="cursor-pointer"
-                    onClick={() => dispatch(declineFriendRequest(request._id))}
-                  />
+                  <span className="font-semibold">{friend.username}</span>
                 </div>
               </div>
             </div>
